@@ -1,0 +1,92 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "Weblog & Content Subsystem" {
+
+  class Weblog {
+    - id : String
+    - handle : String
+    - name : String
+    - description : String
+    - locale : String
+    - timeZone : String
+
+    + getHandle()
+    + getName()
+    + getDescription()
+  }
+
+  class WeblogEntry {
+    - id : String
+    - title : String
+    - text : String
+    - pubTime : Date
+    - status : String
+    - allowComments : boolean
+
+    + isPublished()
+    + getTitle()
+    + getPubTime()
+  }
+
+  class WeblogEntryComment {
+    - id : String
+    - content : String
+    - postTime : Date
+    - approved : boolean
+
+    + isApproved()
+    + getPostTime()
+  }
+
+  class WeblogCategory {
+    - id : String
+    - name : String
+    - description : String
+
+    + getName()
+  }
+
+  class WeblogBookmark {
+    - id : String
+    - name : String
+    - url : String
+    - description : String
+
+    + getUrl()
+  }
+
+  interface WeblogManager {
+    + saveWeblog(Weblog)
+    + getWeblogByHandle(String)
+    + getWeblogEntries(Weblog)
+  }
+
+  class JPAWeblogManagerImpl {
+    + saveWeblog(Weblog)
+    + getWeblogByHandle(String)
+    + getWeblogEntries(Weblog)
+  }
+
+  interface WeblogEntryManager {
+    + saveWeblogEntry(WeblogEntry)
+    + removeWeblogEntry(WeblogEntry)
+    + getWeblogEntry(String)
+  }
+
+  class WeblogEntryRenderer {
+    + render(WeblogEntry)
+  }
+}
+
+Weblog "1" o-- "many" WeblogEntry
+WeblogEntry "1" o-- "many" WeblogEntryComment
+Weblog "1" o-- "many" WeblogCategory
+Weblog "1" o-- "many" WeblogBookmark
+
+WeblogManager <|.. JPAWeblogManagerImpl
+WeblogManager ..> Weblog
+WeblogEntryManager ..> WeblogEntry
+WeblogEntryRenderer ..> WeblogEntry
+
+@enduml
